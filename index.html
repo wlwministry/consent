@@ -1,0 +1,1002 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>WLWM Prayer Appointment Consent Form</title>
+<script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.7/dist/signature_pad.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+  :root {
+    --cream: #faf8f4;
+    --warm-white: #ffffff;
+    --ink: #1a1a1a;
+    --mid: #4a4a4a;
+    --muted: #767676;
+    --rule: #d4cfc6;
+    --accent: #3b5e8c;
+    --accent-light: #edf2f8;
+    --danger: #b94a48;
+    --success: #2e7d32;
+    --border-radius: 6px;
+    --shadow: 0 2px 12px rgba(0,0,0,0.08);
+    --font-body: Georgia, 'Times New Roman', serif;
+    --font-ui: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--cream);
+    color: var(--ink);
+    font-family: var(--font-body);
+    font-size: 16px;
+    line-height: 1.7;
+    padding: 0;
+    min-height: 100vh;
+  }
+
+  .page-wrap {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 2rem 1.25rem 4rem;
+  }
+
+  /* Header */
+  .doc-header {
+    text-align: center;
+    border-bottom: 2px solid var(--accent);
+    padding-bottom: 1.5rem;
+    margin-bottom: 2rem;
+  }
+  .doc-header .ministry-name {
+    font-family: var(--font-ui);
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 0.5rem;
+  }
+  .doc-header h1 {
+    font-family: var(--font-body);
+    font-size: 1.5rem;
+    font-weight: normal;
+    color: var(--ink);
+    margin-bottom: 0.4rem;
+    line-height: 1.3;
+  }
+  .doc-header .sub {
+    font-family: var(--font-ui);
+    font-size: 0.8rem;
+    color: var(--muted);
+    margin-bottom: 0.5rem;
+  }
+  .doc-header .version-badge {
+    display: inline-block;
+    background: var(--accent-light);
+    color: var(--accent);
+    font-family: var(--font-ui);
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    padding: 0.2rem 0.6rem;
+    border-radius: 20px;
+    margin-top: 0.25rem;
+  }
+  .required-notice {
+    background: var(--accent-light);
+    border-left: 3px solid var(--accent);
+    padding: 0.65rem 1rem;
+    font-family: var(--font-ui);
+    font-size: 0.85rem;
+    color: var(--accent);
+    margin-bottom: 2rem;
+    border-radius: 0 var(--border-radius) var(--border-radius) 0;
+  }
+
+  /* Sections */
+  .section {
+    margin-bottom: 2rem;
+  }
+  .section-title {
+    font-family: var(--font-ui);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--accent);
+    border-bottom: 1px solid var(--rule);
+    padding-bottom: 0.4rem;
+    margin-bottom: 1rem;
+  }
+
+  p { margin-bottom: 0.9rem; color: var(--ink); }
+  p:last-child { margin-bottom: 0; }
+
+  ul {
+    list-style: none;
+    padding: 0;
+    margin-bottom: 0.9rem;
+  }
+  ul li {
+    padding-left: 1.2rem;
+    position: relative;
+    margin-bottom: 0.5rem;
+    color: var(--ink);
+  }
+  ul li::before {
+    content: '–';
+    position: absolute;
+    left: 0;
+    color: var(--muted);
+  }
+
+  /* Agree section */
+  .agree-item {
+    border: 1px solid var(--rule);
+    border-radius: var(--border-radius);
+    padding: 1rem 1.1rem;
+    margin-bottom: 0.75rem;
+    background: var(--warm-white);
+  }
+  .agree-item strong {
+    display: block;
+    font-family: var(--font-ui);
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: var(--accent);
+    margin-bottom: 0.35rem;
+  }
+
+  /* Signature form */
+  .sig-form {
+    background: var(--warm-white);
+    border: 1px solid var(--rule);
+    border-radius: var(--border-radius);
+    padding: 1.5rem;
+    box-shadow: var(--shadow);
+    margin-top: 2rem;
+  }
+  .sig-form-title {
+    font-family: var(--font-ui);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 1.25rem;
+    padding-bottom: 0.4rem;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .field-group {
+    margin-bottom: 1.1rem;
+  }
+  label {
+    display: block;
+    font-family: var(--font-ui);
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--mid);
+    margin-bottom: 0.35rem;
+  }
+  label .req {
+    color: var(--danger);
+    margin-left: 2px;
+  }
+  input[type="text"],
+  input[type="date"] {
+    width: 100%;
+    padding: 0.6rem 0.8rem;
+    border: 1.5px solid var(--rule);
+    border-radius: var(--border-radius);
+    font-family: var(--font-ui);
+    font-size: 1rem;
+    color: var(--ink);
+    background: var(--cream);
+    transition: border-color 0.2s;
+    appearance: none;
+    -webkit-appearance: none;
+  }
+  input[type="text"]:focus,
+  input[type="date"]:focus {
+    outline: none;
+    border-color: var(--accent);
+    background: var(--warm-white);
+  }
+
+  /* Signature canvas */
+  .sig-canvas-wrap {
+    margin-bottom: 1.1rem;
+  }
+  .sig-canvas-label {
+    font-family: var(--font-ui);
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--mid);
+    margin-bottom: 0.35rem;
+    display: block;
+  }
+  .sig-canvas-label .req { color: var(--danger); margin-left: 2px; }
+  .sig-canvas-instructions {
+    font-family: var(--font-ui);
+    font-size: 0.75rem;
+    color: var(--muted);
+    margin-bottom: 0.4rem;
+  }
+  .sig-box {
+    position: relative;
+    border: 1.5px solid var(--rule);
+    border-radius: var(--border-radius);
+    background: var(--warm-white);
+    overflow: hidden;
+    touch-action: none;
+  }
+  .sig-box canvas {
+    display: block;
+    width: 100%;
+    height: 160px;
+    cursor: crosshair;
+    touch-action: none;
+  }
+  .sig-placeholder {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-family: var(--font-ui);
+    font-size: 0.78rem;
+    color: #bbb;
+    pointer-events: none;
+    text-align: center;
+    user-select: none;
+  }
+  .sig-actions {
+    margin-top: 0.4rem;
+    text-align: right;
+  }
+  .btn-clear {
+    background: none;
+    border: 1px solid var(--rule);
+    color: var(--muted);
+    font-family: var(--font-ui);
+    font-size: 0.78rem;
+    padding: 0.3rem 0.75rem;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .btn-clear:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  /* Validation feedback */
+  .field-error {
+    font-family: var(--font-ui);
+    font-size: 0.75rem;
+    color: var(--danger);
+    margin-top: 0.25rem;
+    display: none;
+  }
+  .field-error.visible { display: block; }
+
+  /* Submit button */
+  .btn-generate {
+    width: 100%;
+    padding: 0.9rem 1.5rem;
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: var(--border-radius);
+    font-family: var(--font-ui);
+    font-size: 1rem;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    cursor: pointer;
+    margin-top: 0.5rem;
+    transition: background 0.2s, transform 0.1s;
+  }
+  .btn-generate:hover { background: #2e4d75; }
+  .btn-generate:active { transform: scale(0.99); }
+  .btn-generate:disabled {
+    background: var(--muted);
+    cursor: not-allowed;
+  }
+
+  /* Status messages */
+  .status-msg {
+    font-family: var(--font-ui);
+    font-size: 0.85rem;
+    text-align: center;
+    margin-top: 1rem;
+    padding: 0.75rem;
+    border-radius: var(--border-radius);
+    display: none;
+  }
+  .status-msg.visible { display: block; }
+  .status-msg.success {
+    background: #e8f5e9;
+    color: var(--success);
+    border: 1px solid #a5d6a7;
+  }
+  .status-msg.error {
+    background: #fdecea;
+    color: var(--danger);
+    border: 1px solid #f5c6c5;
+  }
+  .status-msg.info {
+    background: var(--accent-light);
+    color: var(--accent);
+    border: 1px solid #b3c8e0;
+  }
+
+  /* Footer */
+  .doc-footer {
+    text-align: center;
+    margin-top: 3rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--rule);
+    font-family: var(--font-ui);
+    font-size: 0.75rem;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+
+  /* Responsive */
+  @media (max-width: 480px) {
+    body { font-size: 15px; }
+    .page-wrap { padding: 1.25rem 1rem 3rem; }
+    .doc-header h1 { font-size: 1.25rem; }
+    .sig-form { padding: 1.1rem; }
+  }
+</style>
+</head>
+<body>
+<div class="page-wrap">
+
+  <!-- Document Header -->
+  <div class="doc-header">
+    <div class="ministry-name">Well of Living Waters Ministry</div>
+    <h1>Prayer Appointment Consent &amp; Release Form</h1>
+    <div class="sub">Australind, Western Australia</div>
+    <div class="version-badge">Version 1.7</div>
+  </div>
+
+  <div class="required-notice">
+    This form is required before your appointment can proceed. Please read all sections carefully before signing.
+  </div>
+
+  <!-- GENERAL -->
+  <div class="section">
+    <div class="section-title">General</div>
+    <p>I confirm I am the person named on this form, and I seek prayer ministry of my own free will.</p>
+    <p>This is a Christian ministry that is based on Biblical principles and involves recipients in a time of prayer and listening to God the Father, in the name of Jesus and empowered by the Holy Spirit. Through prayer, biblical principles, and active listening, the approach seeks to identify root causes of ongoing struggles and facilitate encounters with God's healing presence.</p>
+    <p>Appointments are not provided for people not present and consenting.</p>
+    <p><strong>Volunteer prayer ministers:</strong><br>
+    Prayer ministry appointments are run by a minimum of two trained volunteer prayer ministers with police clearances. I may be asked if an additional WLWM team member can attend my appointment for the purpose of their development in prayer ministry. I have the right to decline.</p>
+    <p><strong>Appointment based:</strong><br>
+    WLWM provides prayer ministry within the context of appointments, and is not set up to provide ongoing support in between appointments.</p>
+    <p><strong>Appointments do not replace:</strong></p>
+    <ul>
+      <li>Professional treatment or services such as relationship counselling, addiction counselling, medical treatment, psychological therapy, financial advice or career counselling.</li>
+      <li>Pastoral care from involvement with a local church.</li>
+    </ul>
+    <p><strong>WLWM reserves the right to:</strong></p>
+    <ul>
+      <li>Decline to provide appointments or continue to provide them where assessed that a person requires supports outside of their scope. This decision will not be made on the basis of attributes such as age, disability, race, sex, sexual orientation or religious belief; but rather WLWM's capacity to provide the requested prayer ministry in a way that is timely, safe, sustainable and Biblical.</li>
+      <li>Redirect towards more appropriate avenues of support.</li>
+    </ul>
+  </div>
+
+  <!-- CONFIDENTIALITY & PRIVACY -->
+  <div class="section">
+    <div class="section-title">Confidentiality &amp; Privacy</div>
+    <p>I consent to my information being used as per WLWM's privacy policy. In particular:</p>
+    <ul>
+      <li>I understand that information provided by me will be considered private and confidential; and will not be sold to or shared with any third party without my consent or request.</li>
+      <li>I may be asked if I wish to share my experience or testimony with WLWM for the purpose of encouragement of WLWM team members or people considering prayer ministry. This is entirely optional. I can define how my testimony is shared (e.g. anonymous, wording, with whom — e.g. WLWM team members only).</li>
+      <li>I have the right to later withdraw or change any consent to share information.</li>
+    </ul>
+    <p><strong>Exceptions to confidentiality include:</strong></p>
+    <ul>
+      <li>Concerns for the safety of myself or others.</li>
+      <li>Requirement by law (such as reporting of child abuse).</li>
+      <li>Information ordered or otherwise reasonably required in legal proceedings.</li>
+      <li>At times we may seek your consent to discuss how best to support you, e.g. with another church staff member who also observes confidentiality agreement.</li>
+    </ul>
+    <p>Records of appointments are kept for legal requirements. They do not contain personal details unless required for safeguarding, are strictly confidential and can be accessed by myself in accordance with the Australian Privacy Principles.</p>
+  </div>
+
+  <!-- EXPERIENCES, OUTCOMES & LIABILITY -->
+  <div class="section">
+    <div class="section-title">Experiences, Outcomes &amp; Liability</div>
+    <p>I understand and acknowledge that:</p>
+    <ul>
+      <li>Prayer ministry may involve discussing past and current sensitive personal matters.</li>
+      <li>People can experience a variety of responses involving their emotions, mind, body or spirit, including distress during or after prayer ministry. This can include exacerbation of existing physical or mental health conditions.</li>
+      <li>Prayer ministry outcomes vary between individuals and cannot be predicted or guaranteed.</li>
+      <li>I am responsible for my own decisions during and after prayer ministry appointments. For example, if I change or cease any treatment or therapy for health conditions without first consulting the relevant health professional, I do so at my own risk.</li>
+      <li>WLWM volunteers will exercise reasonable care in providing prayer ministry, but are not liable for outcomes that result from inherent risks of discussing personal matters that I have been informed about.</li>
+      <li>WLWM remains responsible for ensuring its team members are properly trained, exercise due care, and act within appropriate boundaries and ethical standards.</li>
+      <li>If I have concerns, I am encouraged to contact WLWM's coordinator or WLWM leadership.</li>
+    </ul>
+  </div>
+
+  <!-- I AGREE THAT -->
+  <div class="section">
+    <div class="section-title">I Agree That</div>
+    <div class="agree-item">
+      <strong>Voluntary participation</strong>
+      I have considered whether prayer ministry is right for me at this time. I can decline to discuss any topic or stop the appointment at any time.
+    </div>
+    <div class="agree-item">
+      <strong>Acknowledgment of inherent risks</strong>
+      I understand that discussing sensitive personal matters may cause emotional distress, and that outcomes from prayer ministry cannot be guaranteed. I voluntarily accept these inherent risks.
+    </div>
+    <div class="agree-item">
+      <strong>My responsibility for my own actions</strong>
+      If a third party makes a claim against WLWM arising from my own misconduct or actions (not related to how WLWM volunteers conducted the ministry), I will be responsible for associated costs.
+    </div>
+    <div class="agree-item">
+      <strong>Safety</strong>
+      To help WLWM provide appropriate support and maintain a safe environment for everyone, I agree to disclose relevant information including:
+      <ul style="margin-top:0.5rem;">
+        <li>Recent infectious symptoms (e.g. cold/flu in the last 7 days)</li>
+        <li>Severe allergies that may require emergency response</li>
+        <li>Current safety concerns (e.g. domestic violence, substance use with risk of withdrawal)</li>
+        <li>Recent suicidal thoughts or severe distress</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- SIGNATURE FORM -->
+  <div class="sig-form">
+    <div class="sig-form-title">Your Signature</div>
+
+    <div class="field-group">
+      <label for="fullName">Full name <span class="req">*</span></label>
+      <input type="text" id="fullName" placeholder="Type your full legal name" autocomplete="name">
+      <div class="field-error" id="err-name">Please enter your full name.</div>
+    </div>
+
+    <div class="field-group">
+      <label for="dob">Date of birth <span class="req">*</span></label>
+      <input type="date" id="dob" max="">
+      <div class="field-error" id="err-dob">Please enter your date of birth.</div>
+    </div>
+
+    <div class="field-group">
+      <label for="dateSigned">Date signed <span class="req">*</span></label>
+      <input type="date" id="dateSigned">
+      <div class="field-error" id="err-date">Please confirm the date.</div>
+    </div>
+
+    <div class="sig-canvas-wrap">
+      <span class="sig-canvas-label">Signature <span class="req">*</span></span>
+      <div class="sig-canvas-instructions">Draw your signature below using your finger, stylus, or mouse.</div>
+      <div class="sig-box" id="sigBox">
+        <canvas id="sigCanvas"></canvas>
+        <div class="sig-placeholder" id="sigPlaceholder">Sign here</div>
+      </div>
+      <div class="sig-actions">
+        <button type="button" class="btn-clear" id="clearBtn">Clear signature</button>
+      </div>
+      <div class="field-error" id="err-sig">Please draw your signature before generating the form.</div>
+    </div>
+
+    <button type="button" class="btn-generate" id="generateBtn">Generate &amp; Download PDF</button>
+    <div class="status-msg" id="statusMsg"></div>
+  </div>
+
+  <!-- Footer -->
+  <div class="doc-footer">
+    Well of Living Waters Ministry &nbsp;|&nbsp; Australind, Western Australia<br>
+    Privacy Policy available on request &nbsp;|&nbsp; Version 1.7
+  </div>
+
+</div><!-- end page-wrap -->
+
+<script>
+(function () {
+  "use strict";
+
+  // ── Configuration ───────────────────────────────────────────────────────────
+  const MINISTRY_EMAIL = "admin@wlwm.onmicrosoft.com";
+  const FORM_VERSION   = "1.7";
+
+  // ── DOM refs ─────────────────────────────────────────────────────────────────
+  const nameInput    = document.getElementById("fullName");
+  const dobInput     = document.getElementById("dob");
+  const dateInput    = document.getElementById("dateSigned");
+  const clearBtn     = document.getElementById("clearBtn");
+  const generateBtn  = document.getElementById("generateBtn");
+  const statusMsg    = document.getElementById("statusMsg");
+  const sigPlaceholder = document.getElementById("sigPlaceholder");
+  const sigBox       = document.getElementById("sigBox");
+  const sigCanvas    = document.getElementById("sigCanvas");
+
+  // ── Set today as default date signed; cap DOB at today ───────────────────────
+  const todayISO = new Date().toISOString().split("T")[0];
+  dateInput.value = todayISO;
+  dobInput.setAttribute("max", todayISO);
+
+  // ── Init Signature Pad ───────────────────────────────────────────────────────
+  function resizeCanvas() {
+    const ratio = Math.max(window.devicePixelRatio || 1, 1);
+    const w = sigBox.offsetWidth;
+    const h = 160;
+    sigCanvas.width  = w * ratio;
+    sigCanvas.height = h * ratio;
+    sigCanvas.style.width  = w + "px";
+    sigCanvas.style.height = h + "px";
+    sigCanvas.getContext("2d").scale(ratio, ratio);
+    signaturePad.clear();
+  }
+
+  const signaturePad = new SignaturePad(sigCanvas, {
+    penColor: "#1a1a1a",
+    minWidth: 1.2,
+    maxWidth: 2.8,
+    throttle: 16,
+  });
+
+  signaturePad.addEventListener("beginStroke", function () {
+    sigPlaceholder.style.display = "none";
+  });
+
+  window.addEventListener("resize", resizeCanvas);
+  resizeCanvas();
+
+  clearBtn.addEventListener("click", function () {
+    signaturePad.clear();
+    sigPlaceholder.style.display = "";
+    document.getElementById("err-sig").classList.remove("visible");
+  });
+
+  // ── Validation ───────────────────────────────────────────────────────────────
+  function showError(id) { document.getElementById(id).classList.add("visible"); }
+  function hideError(id) { document.getElementById(id).classList.remove("visible"); }
+
+  function validate() {
+    let ok = true;
+    if (!nameInput.value.trim()) { showError("err-name"); ok = false; } else { hideError("err-name"); }
+    if (!dobInput.value)         { showError("err-dob");  ok = false; } else { hideError("err-dob"); }
+    if (!dateInput.value)        { showError("err-date"); ok = false; } else { hideError("err-date"); }
+    if (signaturePad.isEmpty())  { showError("err-sig");  ok = false; } else { hideError("err-sig"); }
+    return ok;
+  }
+
+  // ── Status helpers ────────────────────────────────────────────────────────────
+  function setStatus(msg, type) {
+    statusMsg.textContent = msg;
+    statusMsg.className = "status-msg visible " + type;
+  }
+  function clearStatus() {
+    statusMsg.className = "status-msg";
+    statusMsg.textContent = "";
+  }
+
+  // ── Timestamp (AWST = UTC+8) ──────────────────────────────────────────────────
+  function getAWSTTimestamp() {
+    const now = new Date();
+    const awst = new Date(now.getTime() + (8 * 60 * 60 * 1000));
+    const pad = n => String(n).padStart(2, "0");
+    return (
+      awst.getUTCFullYear() + "-" +
+      pad(awst.getUTCMonth() + 1) + "-" +
+      pad(awst.getUTCDate()) + " " +
+      pad(awst.getUTCHours()) + ":" +
+      pad(awst.getUTCMinutes()) + ":" +
+      pad(awst.getUTCSeconds()) + " AWST"
+    );
+  }
+
+  // ── Format date for display ──────────────────────────────────────────────────
+  function formatDate(isoStr) {
+    if (!isoStr) return "";
+    const [y, m, d] = isoStr.split("-");
+    const months = ["January","February","March","April","May","June",
+                    "July","August","September","October","November","December"];
+    return d + " " + months[parseInt(m,10)-1] + " " + y;
+  }
+
+  // ── PDF Generation ───────────────────────────────────────────────────────────
+  function generatePDF(fullName, dob, dateSigned, sigDataURL, timestamp) {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF({ unit: "mm", format: "a4", orientation: "portrait" });
+
+    const pageW  = 210;
+    const pageH  = 297;
+    const margin = 20;
+    const usableW = pageW - margin * 2;
+    let y = margin;
+
+    const ACCENT    = [59, 94, 140];
+    const INK       = [26, 26, 26];
+    const MID       = [74, 74, 74];
+    const MUTED     = [118, 118, 118];
+    const RULE      = [212, 207, 198];
+    const LIGHT_BG  = [237, 242, 248];
+
+    function checkPage(needed) {
+      if (y + needed > pageH - margin) {
+        doc.addPage();
+        y = margin;
+        addPageFooter();
+      }
+    }
+
+    function addPageFooter() {
+      const footerY = pageH - 10;
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(7.5);
+      doc.setTextColor(...MUTED);
+      const footerText =
+        "Well of Living Waters Ministry  |  Australind, Western Australia  |  v" + FORM_VERSION;
+      doc.text(footerText, pageW / 2, footerY, { align: "center" });
+      doc.setTextColor(...INK);
+    }
+
+    // ── Header ──
+    doc.setFillColor(...ACCENT);
+    doc.rect(0, 0, pageW, 28, "F");
+    doc.setTextColor(255, 255, 255);
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(8);
+    doc.text("WELL OF LIVING WATERS MINISTRY", pageW / 2, 9, { align: "center" });
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(14);
+    doc.text("Prayer Appointment Consent & Release Form", pageW / 2, 17, { align: "center" });
+    doc.setFontSize(8);
+    doc.text("Australind, Western Australia", pageW / 2, 23.5, { align: "center" });
+    doc.setTextColor(...INK);
+    y = 36;
+
+    // Version badge
+    doc.setFillColor(...LIGHT_BG);
+    doc.roundedRect(margin, y, 30, 6.5, 1.5, 1.5, "F");
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(7.5);
+    doc.setTextColor(...ACCENT);
+    doc.text("Version " + FORM_VERSION, margin + 15, y + 4.3, { align: "center" });
+    doc.setTextColor(...INK);
+    y += 11;
+
+    // Required notice
+    doc.setFillColor(...LIGHT_BG);
+    doc.rect(margin, y, usableW, 8, "F");
+    doc.setFillColor(...ACCENT);
+    doc.rect(margin, y, 2.5, 8, "F");
+    doc.setFont("helvetica", "italic");
+    doc.setFontSize(9);
+    doc.setTextColor(...ACCENT);
+    doc.text(
+      "This form is required before your appointment can proceed. Please read all sections carefully before signing.",
+      margin + 5, y + 5.2
+    );
+    doc.setTextColor(...INK);
+    y += 14;
+
+    // ── Section rendering helpers ──
+    function sectionHeading(title) {
+      checkPage(10);
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(8);
+      doc.setTextColor(...ACCENT);
+      doc.text(title.toUpperCase(), margin, y);
+      doc.setDrawColor(...RULE);
+      doc.setLineWidth(0.3);
+      doc.line(margin, y + 1.5, margin + usableW, y + 1.5);
+      doc.setTextColor(...INK);
+      y += 6;
+    }
+
+    function bodyText(text, indent) {
+      const x = margin + (indent || 0);
+      const maxW = usableW - (indent || 0);
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(9.5);
+      doc.setTextColor(...MID);
+      const lines = doc.splitTextToSize(text, maxW);
+      checkPage(lines.length * 5 + 2);
+      doc.text(lines, x, y);
+      y += lines.length * 5 + 2;
+    }
+
+    function bulletItem(text, indent) {
+      const bx = margin + (indent || 4);
+      const tx = bx + 4;
+      const maxW = usableW - (indent || 4) - 4;
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(9.5);
+      doc.setTextColor(...MID);
+      const lines = doc.splitTextToSize(text, maxW);
+      checkPage(lines.length * 5 + 2);
+      doc.text("\u2013", bx, y);
+      doc.text(lines, tx, y);
+      y += lines.length * 5 + 2;
+    }
+
+    function subHeading(text) {
+      checkPage(8);
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(9.5);
+      doc.setTextColor(...INK);
+      doc.text(text, margin, y);
+      y += 5.5;
+    }
+
+    function spacer(h) { y += h || 4; }
+
+    // ── GENERAL ──
+    sectionHeading("General");
+    bodyText("I confirm I am the person named on this form, and I seek prayer ministry of my own free will.");
+    spacer(2);
+    bodyText("This is a Christian ministry that is based on Biblical principles and involves recipients in a time of prayer and listening to God the Father, in the name of Jesus and empowered by the Holy Spirit. Through prayer, biblical principles, and active listening, the approach seeks to identify root causes of ongoing struggles and facilitate encounters with God's healing presence.");
+    spacer(2);
+    bodyText("Appointments are not provided for people not present and consenting.");
+    spacer(2);
+    subHeading("Volunteer prayer ministers:");
+    bodyText("Prayer ministry appointments are run by a minimum of two trained volunteer prayer ministers with police clearances. I may be asked if an additional WLWM team member can attend my appointment for the purpose of their development in prayer ministry. I have the right to decline.");
+    spacer(2);
+    subHeading("Appointment based:");
+    bodyText("WLWM provides prayer ministry within the context of appointments, and is not set up to provide ongoing support in between appointments.");
+    spacer(2);
+    subHeading("Appointments do not replace:");
+    bulletItem("Professional treatment or services such as relationship counselling, addiction counselling, medical treatment, psychological therapy, financial advice or career counselling.");
+    bulletItem("Pastoral care from involvement with a local church.");
+    spacer(2);
+    subHeading("WLWM reserves the right to:");
+    bulletItem("Decline to provide appointments or continue to provide them where assessed that a person requires supports outside of their scope. This decision will not be made on the basis of attributes such as age, disability, race, sex, sexual orientation or religious belief; but rather WLWM's capacity to provide the requested prayer ministry in a way that is timely, safe, sustainable and Biblical.");
+    bulletItem("Redirect towards more appropriate avenues of support.");
+    spacer(4);
+
+    // ── CONFIDENTIALITY ──
+    sectionHeading("Confidentiality & Privacy");
+    bodyText("I consent to my information being used as per WLWM's privacy policy. In particular:");
+    spacer(2);
+    bulletItem("I understand that information provided by me will be considered private and confidential; and will not be sold to or shared with any third party without my consent or request.");
+    bulletItem("I may be asked if I wish to share my experience or testimony with WLWM for the purpose of encouragement of WLWM team members or people considering prayer ministry. This is entirely optional. I can define how my testimony is shared (e.g. anonymous, wording, with whom — e.g. WLWM team members only).");
+    bulletItem("I have the right to later withdraw or change any consent to share information.");
+    spacer(2);
+    subHeading("Exceptions to confidentiality include:");
+    bulletItem("Concerns for the safety of myself or others.");
+    bulletItem("Requirement by law (such as reporting of child abuse).");
+    bulletItem("Information ordered or otherwise reasonably required in legal proceedings.");
+    bulletItem("At times we may seek your consent to discuss how best to support you, e.g. with another church staff member who also observes confidentiality agreement.");
+    spacer(2);
+    bodyText("Records of appointments are kept for legal requirements. They do not contain personal details unless required for safeguarding, are strictly confidential and can be accessed by myself in accordance with the Australian Privacy Principles.");
+    spacer(4);
+
+    // ── EXPERIENCES, OUTCOMES & LIABILITY ──
+    sectionHeading("Experiences, Outcomes & Liability");
+    bodyText("I understand and acknowledge that:");
+    spacer(2);
+    bulletItem("Prayer ministry may involve discussing past and current sensitive personal matters.");
+    bulletItem("People can experience a variety of responses involving their emotions, mind, body or spirit, including distress during or after prayer ministry. This can include exacerbation of existing physical or mental health conditions.");
+    bulletItem("Prayer ministry outcomes vary between individuals and cannot be predicted or guaranteed.");
+    bulletItem("I am responsible for my own decisions during and after prayer ministry appointments. For example, if I change or cease any treatment or therapy for health conditions without first consulting the relevant health professional, I do so at my own risk.");
+    bulletItem("WLWM volunteers will exercise reasonable care in providing prayer ministry, but are not liable for outcomes that result from inherent risks of discussing personal matters that I have been informed about.");
+    bulletItem("WLWM remains responsible for ensuring its team members are properly trained, exercise due care, and act within appropriate boundaries and ethical standards.");
+    bulletItem("If I have concerns, I am encouraged to contact WLWM's coordinator or WLWM leadership.");
+    spacer(4);
+
+    // ── I AGREE THAT ──
+    sectionHeading("I Agree That");
+
+    function agreeBlock(heading, text) {
+      checkPage(20);
+      const blockH = doc.splitTextToSize(text, usableW - 10).length * 5 + 12;
+      checkPage(blockH);
+      doc.setFillColor(248, 248, 246);
+      doc.setDrawColor(...RULE);
+      doc.setLineWidth(0.3);
+      doc.roundedRect(margin, y, usableW, blockH, 2, 2, "FD");
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(8.5);
+      doc.setTextColor(...ACCENT);
+      doc.text(heading, margin + 4, y + 6);
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(9.5);
+      doc.setTextColor(...MID);
+      const lines = doc.splitTextToSize(text, usableW - 10);
+      doc.text(lines, margin + 4, y + 11.5);
+      y += blockH + 3;
+    }
+
+    agreeBlock(
+      "Voluntary participation",
+      "I have considered whether prayer ministry is right for me at this time. I can decline to discuss any topic or stop the appointment at any time."
+    );
+    agreeBlock(
+      "Acknowledgment of inherent risks",
+      "I understand that discussing sensitive personal matters may cause emotional distress, and that outcomes from prayer ministry cannot be guaranteed. I voluntarily accept these inherent risks."
+    );
+    agreeBlock(
+      "My responsibility for my own actions",
+      "If a third party makes a claim against WLWM arising from my own misconduct or actions (not related to how WLWM volunteers conducted the ministry), I will be responsible for associated costs."
+    );
+
+    // Safety block with bullet list
+    checkPage(40);
+    const safetyLines = [
+      "Recent infectious symptoms (e.g. cold/flu in the last 7 days)",
+      "Severe allergies that may require emergency response",
+      "Current safety concerns (e.g. domestic violence, substance use with risk of withdrawal)",
+      "Recent suicidal thoughts or severe distress"
+    ];
+    const safetyTextH = safetyLines.length * 5.5 + 20;
+    doc.setFillColor(248, 248, 246);
+    doc.setDrawColor(...RULE);
+    doc.setLineWidth(0.3);
+    doc.roundedRect(margin, y, usableW, safetyTextH, 2, 2, "FD");
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(8.5);
+    doc.setTextColor(...ACCENT);
+    doc.text("Safety", margin + 4, y + 6);
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(9.5);
+    doc.setTextColor(...MID);
+    doc.text(
+      "To help WLWM provide appropriate support and maintain a safe environment for everyone, I agree to disclose relevant information including:",
+      margin + 4, y + 11.5, { maxWidth: usableW - 10 }
+    );
+    let bly = y + 19;
+    safetyLines.forEach(function(item) {
+      doc.text("\u2013", margin + 8, bly);
+      doc.text(item, margin + 12, bly);
+      bly += 5.5;
+    });
+    y += safetyTextH + 6;
+
+    // ── SIGNATURE BLOCK ──
+    checkPage(60);
+    sectionHeading("Signature");
+
+    // Signature image
+    try {
+      const imgProps = doc.getImageProperties(sigDataURL);
+      const maxSigW = usableW;
+      const maxSigH = 35;
+      let sigW = maxSigW;
+      let sigH = (imgProps.height / imgProps.width) * sigW;
+      if (sigH > maxSigH) { sigH = maxSigH; sigW = (imgProps.width / imgProps.height) * sigH; }
+      checkPage(sigH + 5);
+      doc.setDrawColor(...RULE);
+      doc.setLineWidth(0.3);
+      doc.rect(margin, y, sigW, sigH);
+      doc.addImage(sigDataURL, "PNG", margin, y, sigW, sigH);
+      y += sigH + 5;
+    } catch(e) {
+      bodyText("[Signature image could not be rendered]");
+    }
+
+    // Signature details table
+    checkPage(35);
+    const col1 = margin;
+    const col2 = margin + 45;
+    const rowH  = 8;
+    const rows  = [
+      ["Full name:",    fullName],
+      ["Date of birth:", formatDate(dob)],
+      ["Date signed:",   formatDate(dateSigned)],
+      ["Form version:",  "v" + FORM_VERSION],
+      ["Timestamp:",     timestamp],
+    ];
+    rows.forEach(function(row) {
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(9);
+      doc.setTextColor(...MID);
+      doc.text(row[0], col1, y);
+      doc.setFont("helvetica", "normal");
+      doc.setTextColor(...INK);
+      doc.text(String(row[1]), col2, y);
+      y += rowH;
+    });
+
+    // Final rule
+    y += 4;
+    doc.setDrawColor(...RULE);
+    doc.setLineWidth(0.4);
+    doc.line(margin, y, margin + usableW, y);
+
+    // Add footer to all pages
+    const pageCount = doc.internal.getNumberOfPages();
+    for (let i = 1; i <= pageCount; i++) {
+      doc.setPage(i);
+      addPageFooter();
+    }
+
+    return doc;
+  }
+
+  // ── Mailto builder ───────────────────────────────────────────────────────────
+  function buildMailto(fullName, filename) {
+    const subject  = "WLWM Consent Form \u2014 " + fullName;
+    const bodyLines = [
+      "Your signed WLWM consent form has downloaded to your device.",
+      "Please attach it to this email before sending.",
+      "",
+      "HOW TO ATTACH THE FILE:",
+      "",
+      "On iPhone or iPad:",
+      "Tap and hold anywhere in this email body.",
+      "Tap the arrow (more options) if needed.",
+      "Tap \"Add Attachment\" or the paperclip icon.",
+      "Find the file in your Downloads folder or Files app.",
+      "It is named: " + filename,
+      "",
+      "On Android:",
+      "Tap the paperclip icon in your email app.",
+      "Select the file from your Downloads folder.",
+      "",
+      "On a Windows computer:",
+      "Click the paperclip icon in your email program.",
+      "Find the file in your Downloads folder.",
+      "",
+      "On a Mac:",
+      "Click the paperclip icon or drag the file into the email.",
+      "Find the file in your Downloads folder.",
+      "",
+      "If you have trouble, please reply to this email and we will help you.",
+    ];
+    const body = bodyLines.join("\n");
+    return "mailto:" + encodeURIComponent(MINISTRY_EMAIL) +
+           "?subject=" + encodeURIComponent(subject) +
+           "&body=" + encodeURIComponent(body);
+  }
+
+  // ── Main generate handler ────────────────────────────────────────────────────
+  generateBtn.addEventListener("click", function () {
+    clearStatus();
+    if (!validate()) {
+      setStatus("Please fill in all required fields and draw your signature.", "error");
+      window.scrollTo({ top: document.querySelector(".sig-form").offsetTop - 20, behavior: "smooth" });
+      return;
+    }
+
+    const fullName   = nameInput.value.trim();
+    const dob        = dobInput.value;
+    const dateSigned = dateInput.value;
+    const sigDataURL = signaturePad.toDataURL("image/png");
+    const timestamp  = getAWSTTimestamp();
+
+    setStatus("Generating your PDF, please wait\u2026", "info");
+    generateBtn.disabled = true;
+
+    // Defer slightly so status renders
+    setTimeout(function () {
+      try {
+        const doc = generatePDF(fullName, dob, dateSigned, sigDataURL, timestamp);
+
+        // Build filename
+        const safeName = fullName.replace(/\s+/g, "_").replace(/[^a-zA-Z0-9_\-]/g, "");
+        const filename = "WLWM_ConsentForm_v" + FORM_VERSION + "_" + safeName + ".pdf";
+
+        // Download
+        doc.save(filename);
+
+        // Open mailto
+        setTimeout(function () {
+          const mailto = buildMailto(fullName, filename);
+          window.location.href = mailto;
+        }, 800);
+
+        setStatus(
+          "Your PDF has downloaded. Your email app should open shortly \u2014 please attach the PDF file before sending.",
+          "success"
+        );
+      } catch (err) {
+        setStatus("Something went wrong generating the PDF. Please try again or contact the ministry for assistance.", "error");
+        console.error("PDF generation error:", err);
+      }
+      generateBtn.disabled = false;
+    }, 80);
+  });
+
+})();
+</script>
+</body>
+</html>
